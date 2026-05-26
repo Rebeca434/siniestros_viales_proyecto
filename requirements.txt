@@ -1,0 +1,18 @@
+# ════════════════════════════════════════════════════
+# requirements.txt — Siniestros Viales con Ray
+# ════════════════════════════════════════════════════
+
+# Procesamiento distribuido
+ray[default]==2.10.0
+
+# Datos
+pandas==2.2.1
+numpy==1.26.4
+pyarrow==15.0.2      # Soporte Parquet
+
+# Dashboard
+streamlit==1.33.0
+plotly==5.20.0
+
+# Utilerías
+tqdm==4.66.2

@@ -1,0 +1,136 @@
+version: "3.9"
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Ray Cluster — Sistema Distribuido de Análisis de Siniestros Viales
+# ══════════════════════════════════════════════════════════════════════════════
+#
+# Uso:
+#   docker compose up --build          # levantar cluster
+#   docker compose up --scale worker=3 # 3 workers
+#   docker compose down                # bajar todo
+#
+# Puertos:
+#   8265  → Ray Dashboard
+#   8501  → Streamlit Dashboard
+#   6379  → Redis (interno)
+#   10001 → Ray Client (para conectarse externamente)
+# ══════════════════════════════════════════════════════════════════════════════
+
+x-ray-common: &ray-common
+  build:
+    context: ..
+    dockerfile: docker/Dockerfile
+  volumes:
+    - ../data:/app/data
+    - ../outputs:/app/outputs
+    - ../src:/app/src
+  environment:
+    - RAY_DISABLE_IMPORT_WARNING=1
+    - PYTHONPATH=/app/src
+
+services:
+
+  # ── Head Node ─────────────────────────────────────────────────────────────
+  head:
+    <<: *ray-common
+    container_name: ray-head
+    hostname: head
+    command: >
+      bash -c "
+        ray start --head
+                  --port=6379
+                  --ray-client-server-port=10001
+                  --dashboard-host=0.0.0.0
+                  --dashboard-port=8265
+                  --num-cpus=2
+                  --block
+      "
+    ports:
+      - "8265:8265"    # Ray Dashboard
+      - "10001:10001"  # Ray Client
+      - "6379:6379"    # Redis / GCS
+    healthcheck:
+      test: ["CMD", "ray", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # ── Worker Node 1 (estados A–H) ───────────────────────────────────────────
+  worker1:
+    <<: *ray-common
+    container_name: ray-worker-1
+    hostname: worker1
+    command: >
+      bash -c "
+        sleep 5 &&
+        ray start --address=head:6379
+                  --num-cpus=2
+                  --block
+      "
+    depends_on:
+      head:
+        condition: service_healthy
+
+  # ── Worker Node 2 (estados I–Q) ───────────────────────────────────────────
+  worker2:
+    <<: *ray-common
+    container_name: ray-worker-2
+    hostname: worker2
+    command: >
+      bash -c "
+        sleep 5 &&
+        ray start --address=head:6379
+                  --num-cpus=2
+                  --block
+      "
+    depends_on:
+      head:
+        condition: service_healthy
+
+  # ── Worker Node 3 (estados R–Z) ───────────────────────────────────────────
+  worker3:
+    <<: *ray-common
+    container_name: ray-worker-3
+    hostname: worker3
+    command: >
+      bash -c "
+        sleep 5 &&
+        ray start --address=head:6379
+                  --num-cpus=2
+                  --block
+      "
+    depends_on:
+      head:
+        condition: service_healthy
+
+  # ── Aplicación principal ───────────────────────────────────────────────────
+  app:
+    <<: *ray-common
+    container_name: ray-app
+    command: >
+      bash -c "
+        sleep 15 &&
+        cd /app &&
+        python src/main.py --ray-address ray://head:10001 --benchmark
+      "
+    depends_on:
+      - worker1
+      - worker2
+      - worker3
+
+  # ── Dashboard Streamlit ────────────────────────────────────────────────────
+  dashboard:
+    <<: *ray-common
+    container_name: streamlit-dashboard
+    command: >
+      bash -c "
+        sleep 20 &&
+        streamlit run src/dashboard.py
+                  --server.port=8501
+                  --server.address=0.0.0.0
+                  --server.headless=true
+      "
+    ports:
+      - "8501:8501"
+    depends_on:
+      - app
