@@ -33,6 +33,6 @@ Manuel Martinez Martinez 368064
 
 Rebeca Portillo Saenzpardo 368094
 
-Pablo Gael Torre 368073
+Pablo Gael Torres 368073
 
 Fernando Grijalva Fernández 367634
