@@ -16,7 +16,6 @@ import sys
 # ── Configuración de página ────────────────────────────────────────────────
 st.set_page_config(
     page_title="Siniestros Viales México",
-    page_icon="🚗",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -165,10 +164,10 @@ datos   = cargar_todo(carpeta)
 
 seccion = st.sidebar.selectbox(
     "Sección",
-    ["📊 Resumen general", "🗺 Por estado", "🏙 Por municipio",
-     "⏰ Por hora", "⚠️ Por causa", "📅 Por mes",
-     "🚘 Por tipo de accidente", "📈 Tendencia anual",
-     "⚖️ Índice de gravedad", "🏁 Benchmark de rendimiento"],
+    ["Resumen general", "Por estado", "Por municipio",
+     "Por hora", "Por causa", "Por mes",
+     "Por tipo de accidente", "Tendencia anual",
+     "Índice de gravedad", "Benchmark de rendimiento"],
 )
 
 # ── Helpers de tema ────────────────────────────────────────────────────────
