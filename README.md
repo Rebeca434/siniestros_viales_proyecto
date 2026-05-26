@@ -11,8 +11,8 @@ python src/main.py --benchmark
 streamlit run src/dashboard.py
 Cluster con Docker (distribuido):
 bashcd docker && docker compose up --build
-# Ray Dashboard  → http://localhost:8265
-# Streamlit      → http://localhost:8501
+Ray Dashboard  → http://localhost:8265
+Streamlit      → http://localhost:8501
 
 # Datos
 Descarga el CSV de ATUS en https://www.inegi.org.mx/programas/accidentes/ y colócalo en data/. Sin el archivo, el sistema genera un dataset sintético de 500K registros automáticamente.
@@ -23,6 +23,9 @@ Los análisis se guardan en outputs/ray/ y outputs/secuencial/. El benchmark com
 
 # Integrantes
 Manuel Martinez Martinez 368064
+
 Rebeca Portillo Saenzpardo 368094
+
 Pablo Gael Torre 368073
+
 Fernando Grijalva Fernández 367634
