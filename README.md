@@ -6,12 +6,19 @@ Python 3.11 · Ray 2.10 · Pandas · PyArrow · Streamlit · Plotly · Docker
 
 # Ejecución
 Local (paralelo):
+
 bashpip install -r requirements.txt
+
 python src/main.py --benchmark
+
 streamlit run src/dashboard.py
+
 Cluster con Docker (distribuido):
+
 bashcd docker && docker compose up --build
+
 Ray Dashboard  → http://localhost:8265
+
 Streamlit      → http://localhost:8501
 
 # Datos
